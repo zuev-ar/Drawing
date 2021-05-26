@@ -7,48 +7,27 @@
 
 import SwiftUI
 
-struct Flower: Shape {
-    var petalOffset: Double = -20
-    var petalWidth: Double = 100
-    
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        
-        for number in stride(from: 0, to: CGFloat.pi * 2, by: CGFloat.pi / 8) {
-            let rotation = CGAffineTransform(rotationAngle: number)
-            let position = rotation.concatenating(CGAffineTransform(translationX: rect.width / 2, y: rect.height / 2))
-            let originalPetal = Path(ellipseIn: CGRect(x: CGFloat(petalOffset), y: 0, width: CGFloat(petalWidth), height: rect.width))
-            let rotatedPetal = originalPetal.applying(position)
-            
-            path.addPath(rotatedPetal)
-        }
-        
-        return path
-    }
-}
-
 struct ContentView: View {
-    @State private var petalOffset = -20.0
-    @State private var petalWidth = 100.0
+    @State var positionY: Double = 100
     
     var body: some View {
-        VStack {
-//            Flower(petalOffset: petalOffset, petalWidth: petalWidth)
-//                .fill(Color.red, style: FillStyle(eoFill: true))
-////                .stroke(Color.red, lineWidth: 1)
-//
-//            Text("Offset")
-//            Slider(value: $petalOffset, in: -40...40)
-//                .padding([.horizontal, .bottom])
-//
-//            Text("Width")
-//            Slider(value: $petalWidth, in: 0...100)
-//                .padding(.horizontal)
-            
-            Text("Hello world")
-//                .frame(width: 300, height: 300)
-//                .border(Image("Example"), width: 30)
+        GeometryReader { geometry in
+            Path { path in
+                path.move(to: CGPoint(x: Double(geometry.size.width) * 0.5, y: positionY))
+                path.addLine(to: CGPoint(x: 100, y: positionY + 200))
+                path.addLine(to: CGPoint(x: 150, y: positionY + 200))
+                path.addLine(to: CGPoint(x: 150, y: positionY + 500))
+                path.addLine(to: CGPoint(x: Double(geometry.size.width) - 150, y: positionY + 500))
+                path.addLine(to: CGPoint(x: Double(geometry.size.width) - 150, y: positionY + 200))
+                path.addLine(to: CGPoint(x: Double(geometry.size.width) - 100, y: positionY + 200))
+                path.addLine(to: CGPoint(x: Double(geometry.size.width) * 0.5, y: positionY))
+                path.addLine(to: CGPoint(x: 100, y: positionY + 200))
+            }
+            .stroke(Color.blue, style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round))
         }
+        
+        Slider(value: $positionY, in: 50...150)
+            .padding(.horizontal)
     }
 }
 
